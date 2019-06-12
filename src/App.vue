@@ -1,28 +1,37 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <router-view/>
+    <FooterGuide v-show="$route.meta.isShowFooter"></FooterGuide>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import FooterGuide from './components/FooterGuide/FooterGuide'
+import {reqAddress, reqUser} from './api'
+import { RECEIVE_USER } from './vuex/mutation-types'
 
 export default {
-  name: 'app',
+    
+  name: 'App',
+
+  async mounted() {
+    //异步获取地址
+    this.$store.dispatch('getAddress')
+
+    //读取用户信息
+    const result = await reqUser()
+    if(result.code===0){
+      const user = result.data
+      this.$store.commit(RECEIVE_USER, user)
+    }
+  },
+
   components: {
-    HelloWorld
+    FooterGuide
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="stylus" rel="stylesheet/stylus" scoped>
+
 </style>
